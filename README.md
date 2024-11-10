@@ -20,7 +20,13 @@ As for the train set, considering that companies with extremely high market cap 
 
 
 ## Demo
+Firstly, change the dir
 ```bash
-cd ./project_folder
+cd ./project_folder  
+```
+
+Call python3 to run program
+```bash
 python3 app.py
+```
 
