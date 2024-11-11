@@ -29,4 +29,28 @@ Call python3 to run program
 ```bash
 python3 app.py
 ```
+## Initialize the environment
 
+Clone the source code from remote through your preferred protocol.
+
+```bash
+# through HTTP
+git clone https://github.com/Ivanhandsome777/Market_cap_prediction.git
+```
+
+
+
+Initialize the Conda env.
+
+```bash
+# first time setup
+conda env create -f environment.yml
+# or update
+conda env update -f environment.yml
+```
+
+### Activate the Conda environment
+
+```bash
+conda activate yjlhandsome
+```
