@@ -21,3 +21,5 @@ ctrl shift v open md
 3. 配置完成后，重新尝试你的 Git 操作，错误提示应该消失了。
 
 这一步是必要的，因为 Git 需要知道提交的用户名和邮箱才能跟踪代码的历史变更和责任人。
+
+yml文件里面要写 conda-forge 还要删除掉prefix
