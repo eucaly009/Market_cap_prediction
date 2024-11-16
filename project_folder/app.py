@@ -17,7 +17,7 @@ def choose_language():
 @app.route('/zh') #简体中文
 def zh_index():
 '''
-    client = OpenAI(api_key = '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')
+    client = OpenAI(api_key = '')
 
 
 
