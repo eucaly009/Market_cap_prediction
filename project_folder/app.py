@@ -1,15 +1,28 @@
 from flask import Flask, render_template, request, redirect, url_for
 from functions import *
+import google.generativeai as genai
+
+
+
+api="AIzaSyCFIL-2qRWHrUqzyf_TN3A5IKQsVgB2zHg"
+genai.configure(api_key=api)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 app = Flask(__name__)
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def choose_language():
+    return render_template('language_yjl.html')
 
-@app.route('/company', methods=['POST'])
+@app.route('/zh') #简体中文
+def en_index():
+    return render_template('ch_index.html')
+
+@app.route('/zh/company', methods=['POST'])
 def company():
     try:
+
+
         company_name = request.form['company_name']
         function_num = int(request.form['function_num'])
         
@@ -36,7 +49,7 @@ def company():
         return render_template('error.html', error_message=str(e))
 
 
-@app.route('/financial_statements', methods=['GET', 'POST'])
+@app.route('/zh/financial_statements', methods=['GET', 'POST'])
 def financial_statements():
     if request.method == 'POST':
         company_name = request.form['company_name']

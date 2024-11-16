@@ -23,3 +23,10 @@ ctrl shift v open md
 这一步是必要的，因为 Git 需要知道提交的用户名和邮箱才能跟踪代码的历史变更和责任人。
 
 yml文件里面要写 conda-forge 还要删除掉prefix
+
+page=request.args.get("page",default=1,type=int)
+
+C:\Users\jlgmp\anaconda3
+C:\Users\jlgmp\anaconda3\Scripts
+C:\Users\jlgmp\anaconda3\Library\lib
+C:\Users\jlgmp\anaconda3\Library\mingw-w64\bin
