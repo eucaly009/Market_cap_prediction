@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
 from functions import *
-import google.generativeai as genai
+from openai import OpenAI
 
 
 
-api="AIzaSyCFIL-2qRWHrUqzyf_TN3A5IKQsVgB2zHg"
-genai.configure(api_key=api)
-model = genai.GenerativeModel("gemini-1.5-flash")
+
+
+
 
 app = Flask(__name__)
 
@@ -15,8 +15,31 @@ def choose_language():
     return render_template('language_yjl.html')
 
 @app.route('/zh') #简体中文
-def en_index():
-    return render_template('ch_index.html')
+def zh_index():
+'''
+    client = OpenAI(api_key = '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')
+
+
+
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {
+                "role": "user",
+                "content": "tell me a joke"
+            }
+        ]
+    )
+
+'''
+
+
+
+    generated_text = "暂停使用gpt"
+
+
+    return render_template('ch_index.html',text=generated_text)
 
 @app.route('/zh/company', methods=['POST'])
 def company():
