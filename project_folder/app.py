@@ -1,4 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
+import io
+import matplotlib
+matplotlib.use('Agg')  # 使用非交互式后端
+import matplotlib.pyplot as plt
+import base64
 from functions import *
 from openai import OpenAI
 
@@ -41,7 +46,7 @@ def zh_index():
 
 
 
-@app.route('/en',methods=["POST","GET"]) #简体中文
+@app.route('/en',methods=["POST","GET"]) #English
 def en_index():
 # '''
 #     client = OpenAI()
@@ -60,9 +65,6 @@ def en_index():
 #     )
 
 # '''
-
-
-
     generated_text = "暂停使用gpt"
 
 
@@ -93,6 +95,16 @@ def company():
             result_data = get_financial_statements(company_name, statement_choice)
             result_type = 'html_table'  # HTML 表格
 
+        elif function_num == 4:
+            buffer = plot_income_data_web(company_name)
+            img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+            # Pass the base64 string to the template
+            return render_template('plot.html', image_data=img_base64,company_name=company_name)
+
+
+
+
         else:
             return "无效的功能编号"
         
@@ -100,6 +112,9 @@ def company():
 
     except Exception as e:
         return render_template('error.html', error_message=str(e))
+
+
+
 
 
 @app.route('/zh/financial_statements', methods=['GET', 'POST'])
