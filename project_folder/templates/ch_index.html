@@ -26,10 +26,17 @@
             </select>
         </div>
 
+        <div id="generated_text" style="margin-top: 20px;">
+        <!-- 显示AI生成的文本 -->
+        <p>{{ text }}</p>
+        </div>
+
         <button type="submit">提交</button>
     </form>
 
     <script>
+
+
         function toggleStatementChoice() {
             var functionNum = document.getElementById("function_num").value;
             var statementChoiceDiv = document.getElementById("statement_choice");
@@ -40,5 +47,6 @@
             }
         }
     </script>
+
 </body>
 </html>
