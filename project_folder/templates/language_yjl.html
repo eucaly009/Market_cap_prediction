@@ -32,9 +32,8 @@
 </head>
 <body>
     <h1>请选择语言 / Choose Language</h1>
-    <button class="chinese" onclick="chooseLanguage('zh')">中文</button>
-    <button class="english" onclick="chooseLanguage('en')">English</button>
-
+        <button type = "submit" name = "language" value = "cn" class="chinese" onclick="chooseLanguage('zh')">中文</button>
+        <button type = "submit" name = "language" value = "en" class="english" onclick="chooseLanguage('en')">English</button>
     <script>
         function chooseLanguage(lang) {
             if (lang === 'zh') {

@@ -6,33 +6,31 @@ from openai import OpenAI
 
 
 
-
-
 app = Flask(__name__)
 
 @app.route('/')
 def choose_language():
     return render_template('language_yjl.html')
 
-@app.route('/zh') #简体中文
+@app.route('/zh',methods=["POST","GET"]) #简体中文
 def zh_index():
-'''
-    client = OpenAI()
+# '''
+#     client = OpenAI()
 
 
 
-    completion = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {
-                "role": "user",
-                "content": "tell me a joke"
-            }
-        ]
-    )
+#     completion = client.chat.completions.create(
+#         model="gpt-4o-mini",
+#         messages=[
+#             {"role": "system", "content": "You are a helpful assistant."},
+#             {
+#                 "role": "user",
+#                 "content": "tell me a joke"
+#             }
+#         ]
+#     )
 
-'''
+# '''
 
 
 
@@ -40,6 +38,38 @@ def zh_index():
 
 
     return render_template('ch_index.html',text=generated_text)
+
+
+
+@app.route('/en',methods=["POST","GET"]) #简体中文
+def en_index():
+# '''
+#     client = OpenAI()
+
+
+
+#     completion = client.chat.completions.create(
+#         model="gpt-4o-mini",
+#         messages=[
+#             {"role": "system", "content": "You are a helpful assistant."},
+#             {
+#                 "role": "user",
+#                 "content": "tell me a joke"
+#             }
+#         ]
+#     )
+
+# '''
+
+
+
+    generated_text = "暂停使用gpt"
+
+
+    return render_template('en_index.html',text=generated_text)
+
+
+
 
 @app.route('/zh/company', methods=['POST'])
 def company():
