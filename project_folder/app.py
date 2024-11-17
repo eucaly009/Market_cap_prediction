@@ -1,15 +1,81 @@
 from flask import Flask, render_template, request, redirect, url_for
 from functions import *
+from openai import OpenAI
+
+
+
+
 
 app = Flask(__name__)
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def choose_language():
+    return render_template('language_yjl.html')
 
-@app.route('/company', methods=['POST'])
+@app.route('/zh',methods=["POST","GET"]) #简体中文
+def zh_index():
+# '''
+#     client = OpenAI()
+
+
+
+#     completion = client.chat.completions.create(
+#         model="gpt-4o-mini",
+#         messages=[
+#             {"role": "system", "content": "You are a helpful assistant."},
+#             {
+#                 "role": "user",
+#                 "content": "tell me a joke"
+#             }
+#         ]
+#     )
+
+# '''
+
+
+
+    generated_text = "暂停使用gpt"
+
+
+    return render_template('ch_index.html',text=generated_text)
+
+
+
+@app.route('/en',methods=["POST","GET"]) #简体中文
+def en_index():
+# '''
+#     client = OpenAI()
+
+
+
+#     completion = client.chat.completions.create(
+#         model="gpt-4o-mini",
+#         messages=[
+#             {"role": "system", "content": "You are a helpful assistant."},
+#             {
+#                 "role": "user",
+#                 "content": "tell me a joke"
+#             }
+#         ]
+#     )
+
+# '''
+
+
+
+    generated_text = "暂停使用gpt"
+
+
+    return render_template('en_index.html',text=generated_text)
+
+
+
+
+@app.route('/zh/company', methods=['POST'])
 def company():
     try:
+
+
         company_name = request.form['company_name']
         function_num = int(request.form['function_num'])
         
@@ -36,7 +102,7 @@ def company():
         return render_template('error.html', error_message=str(e))
 
 
-@app.route('/financial_statements', methods=['GET', 'POST'])
+@app.route('/zh/financial_statements', methods=['GET', 'POST'])
 def financial_statements():
     if request.method == 'POST':
         company_name = request.form['company_name']
