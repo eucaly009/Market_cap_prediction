@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import base64
 from functions import *
 from openai import OpenAI
+import re
 
 
 
@@ -106,11 +107,123 @@ def company():
             
         elif function_num == 2:
             result_data = get_financial_numbers(company_name)
+            # 英文到中文的映射字典
+            key_mapping_valuation = {
+                "Short Name": "简称",
+                "Long Name": "全称",
+                "Market Cap": "市值",
+                "Enterprise Value": "企业价值",
+                "Trailing PE": "市盈率（TTM）",
+                "Forward PE": "市盈率（预期）",
+                "PEG Ratio": "PEG比率",
+                "Price to Sales Trailing 12 Months": "市销率（TTM）",
+                "Price to Book": "市净率"
+            }
+
+            key_mapping_financial = {
+                "Short Name": "简称",
+                "Long Name": "全称",
+                "Profit Margins": "利润率",
+                "Return on Assets": "资产回报率",
+                "Return on Equity": "股本回报率",
+                "Total Revenue": "总收入",
+                "Net Income to Common": "归属于普通股股东的净利润",
+                "Trailing EPS": "每股收益（TTM）",
+                "Forward EPS": "每股收益（预期）",
+                "Total Debt/Equity": "资产负债率",
+                "Free Cash Flow": "自由现金流"
+            }
+
+            # 使用 map 直接转换键
+            result_data = {
+                "估值指标": list(map(lambda x: [key_mapping_valuation.get(x[0], x[0]), x[1]], result_data['Valuation Measures'])),
+                "财务亮点": list(map(lambda x: [key_mapping_financial.get(x[0], x[0]), x[1]], result_data['Financial Highlights']))
+            }           
             result_type = 'nested'  # 嵌套字典
             
         elif function_num == 3:
             statement_choice = int(request.form['statement_choice'])
             result_data = get_financial_statements(company_name, statement_choice)
+            if statement_choice == 1:
+                result = re.split(r'(<th>)', result_data)
+                indices = [index for index, value in enumerate(result) if value == '<th>']
+                original = [result[indices[i] + 1].split('</th>')[0] for i in range(len(indices))]
+                list = [result[indices[i] + 1].split('</th>')[0] for i in range(6,len(indices))]
+                trans_map = {
+                                "Treasury Shares Number": "库存股数",
+                                "Ordinary Shares Number": "普通股数",
+                                "Share Issued": "发行股数",
+                                "Net Debt": "净债务",
+                                "Total Debt": "总债务",
+                                "Tangible Book Value": "有形账面价值",
+                                "Invested Capital": "投资资本",
+                                "Working Capital": "营运资本",
+                                "Net Tangible Assets": "净有形资产",
+                                "Capital Lease Obligations": "资本租赁义务",
+                                "Common Stock Equity": "普通股权益",
+                                "Total Capitalization": "总资本化",
+                                "Total Equity Gross Minority Interest": "总权益（含少数股东权益）",
+                                "Stockholders Equity": "股东权益",
+                                "Gains Losses Not Affecting Retained Earnings": "影响未分配利润的收益损失",
+                                "Other Equity Adjustments": "其他权益调整",
+                                "Retained Earnings": "留存收益",
+                                "Capital Stock": "资本股",
+                                "Common Stock": "普通股",
+                                "Total Liabilities Net Minority Interest": "总负债（净少数股东权益）",
+                                "Total Non Current Liabilities Net Minority Interest": "总非流动负债（净少数股东权益）",
+                                "Other Non Current Liabilities": "其他非流动负债",
+                                "Tradeand Other Payables Non Current": "应付账款及其他非流动负债",
+                                "Long Term Debt And Capital Lease Obligation": "长期债务及资本租赁义务",
+                                "Long Term Capital Lease Obligation": "长期资本租赁义务",
+                                "Long Term Debt": "长期债务",
+                                "Current Liabilities": "流动负债",
+                                "Other Current Liabilities": "其他流动负债",
+                                "Current Deferred Liabilities": "流动递延负债",
+                                "Current Deferred Revenue": "流动递延收入",
+                                "Current Debt And Capital Lease Obligation": "流动债务及资本租赁义务",
+                                "Current Capital Lease Obligation": "流动资本租赁义务",
+                                "Current Debt": "流动债务",
+                                "Other Current Borrowings": "其他流动借款",
+                                "Commercial Paper": "商业票据",
+                                "Payables And Accrued Expenses": "应付账款及应计费用",
+                                "Payables": "应付账款",
+                                "Total Tax Payable": "应付总税额",
+                                "Income Tax Payable": "应付所得税",
+                                "Accounts Payable": "应付账款",
+                                "Total Assets": "总资产",
+                                "Total Non Current Assets": "总非流动资产",
+                                "Other Non Current Assets": "其他非流动资产",
+                                "Non Current Deferred Assets": "非流动递延资产",
+                                "Non Current Deferred Taxes Assets": "非流动递延税资产",
+                                "Investments And Advances": "投资及预付款",
+                                "Other Investments": "其他投资",
+                                "Investmentin Financial Assets": "金融资产投资",
+                                "Available For Sale Securities": "可供出售证券",
+                                "Net PPE": "净固定资产",
+                                "Accumulated Depreciation": "累计折旧",
+                                "Gross PPE": "总固定资产",
+                                "Leases": "租赁",
+                                "Other Properties": "其他物业",
+                                "Machinery Furniture Equipment": "机器设备及家具",
+                                "Land And Improvements": "土地及改良",
+                                "Properties": "物业",
+                                "Current Assets": "流动资产",
+                                "Other Current Assets": "其他流动资产",
+                                "Inventory": "存货",
+                                "Receivables": "应收账款",
+                                "Other Receivables": "其他应收账款",
+                                "Accounts Receivable": "应收账款",
+                                "Cash Cash Equivalents And Short Term Investments": "现金、现金等价物及短期投资",
+                                "Other Short Term Investments": "其他短期投资",
+                                "Cash And Cash Equivalents": "现金及现金等价物",
+                                "Cash Equivalents": "现金等价物",
+                                "Cash Financial": "现金财务"
+                            }
+                trans_list = [trans_map.get(i, i) for i in list]
+                trans= original[:6]+trans_list
+                for i, index in enumerate(indices):
+                    result[index + 1] = result[index + 1].replace(original[i], trans[i])
+                result_data = "".join(result)
             result_type = 'html_table'  # HTML 表格
 
         elif function_num == 4:
