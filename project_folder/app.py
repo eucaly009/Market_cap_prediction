@@ -77,13 +77,31 @@ def en_index():
 def company():
     try:
 
-
         company_name = request.form['company_name']
         function_num = int(request.form['function_num'])
         
         # 根据不同的功能号调用相应函数并返回结果
         if function_num == 1:
             result_data = company_profile(company_name)
+            key_mapping = {
+                "Short Name": "简称",
+                "Long Name": "全称",
+                "Country": "国家",
+                "Website": "官网",
+                "Industry": "行业",
+                "Sector": "部门",
+                "Business Summary": "业务概要",
+                "Full-time Employees": "全职员工",
+                "Market Cap": "市值",
+                "Volume": "交易量",
+                "Previous Close": "前收盘价",
+                "Current Price": "当前价格",
+                "Open": "开盘价",
+                "Day Low": "最低价",
+                "Day High": "最高价",
+                "Error": "错误信息"
+            }         
+            result_data = dict(map(lambda item: (key_mapping.get(item[0], item[0]), item[1]), result_data.items()))
             result_type = 'simple'  # 简单字典
             
         elif function_num == 2:
@@ -101,20 +119,53 @@ def company():
 
             # Pass the base64 string to the template
             return render_template('plot.html', image_data=img_base64,company_name=company_name)
-
-
-
+        
 
         else:
             return "无效的功能编号"
         
-        return render_template('result.html', company=company_name, result_data=result_data, result_type=result_type)
+        return render_template('ch_result.html', company=company_name, result_data=result_data, result_type=result_type)
 
     except Exception as e:
         return render_template('error.html', error_message=str(e))
+    
 
+# 英文
+# @app.route('/zh/company', methods=['POST'])
+# def company():
+#     try:
 
+#         company_name = request.form['company_name']
+#         function_num = int(request.form['function_num'])
+        
+#         # 根据不同的功能号调用相应函数并返回结果
+#         if function_num == 1:
+#             result_data = company_profile(company_name)
+#             result_type = 'simple'  # 简单字典
+            
+#         elif function_num == 2:
+#             result_data = get_financial_numbers(company_name)
+#             result_type = 'nested'  # 嵌套字典
+            
+#         elif function_num == 3:
+#             statement_choice = int(request.form['statement_choice'])
+#             result_data = get_financial_statements(company_name, statement_choice)
+#             result_type = 'html_table'  # HTML 表格
 
+#         elif function_num == 4:
+#             buffer = plot_income_data_web(company_name)
+#             img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+#             # Pass the base64 string to the template
+#             return render_template('plot.html', image_data=img_base64,company_name=company_name)
+
+#         else:
+#             return "无效的功能编号"
+        
+#         return render_template('ch_result.html', company=company_name, result_data=result_data, result_type=result_type)
+
+#     except Exception as e:
+#         return render_template('error.html', error_message=str(e)
 
 
 @app.route('/zh/financial_statements', methods=['GET', 'POST'])
