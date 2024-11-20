@@ -224,6 +224,122 @@ def company():
                 for i, index in enumerate(indices):
                     result[index + 1] = result[index + 1].replace(original[i], trans[i])
                 result_data = "".join(result)
+            if statement_choice==2:
+                result = re.split(r'(<th>)', result_data)
+                indices = [index for index, value in enumerate(result) if value == '<th>']
+                original = [result[indices[i] + 1].split('</th>')[0] for i in range(len(indices))]
+                list = [result[indices[i] + 1].split('</th>')[0] for i in range(6,len(indices))]
+                trans_map = {
+                'Tax Effect Of Unusual Items': '异常项目的税务影响',
+                'Tax Rate For Calcs': '计算用税率',
+                'Normalized EBITDA': '标准化EBITDA',
+                'Net Income From Continuing Operation Net Minority Interest': '来自持续经营的净收入（扣除少数股东权益）',
+                'Reconciled Depreciation': '调整后的折旧',
+                'Reconciled Cost Of Revenue': '调整后的收入成本',
+                'EBITDA': 'EBITDA',
+                'EBIT': 'EBIT',
+                'Net Interest Income': '净利息收入',
+                'Interest Expense': '利息支出',
+                'Interest Income': '利息收入',
+                'Normalized Income': '标准化收入',
+                'Net Income From Continuing And Discontinued Operation': '来自持续和终止业务的净收入',
+                'Total Expenses': '总支出',
+                'Total Operating Income As Reported': '报告的总营业收入',
+                'Diluted Average Shares': '稀释后的平均股份数',
+                'Basic Average Shares': '基本平均股份数',
+                'Diluted EPS': '稀释每股收益（EPS）',
+                'Basic EPS': '基本每股收益（EPS）',
+                'Diluted NI Availto Com Stockholders': '稀释后的可供普通股东的净收入',
+                'Net Income Common Stockholders': '普通股股东的净收入',
+                'Net Income': '净收入',
+                'Net Income Including Noncontrolling Interests': '包括非控股权益的净收入',
+                'Net Income Continuous Operations': '持续经营的净收入',
+                'Tax Provision': '税收准备金',
+                'Pretax Income': '税前收入',
+                'Other Income Expense': '其他收入支出',
+                'Other Non Operating Income Expenses': '其他非营业收入支出',
+                'Net Non Operating Interest Income Expense': '净非营业利息收入支出',
+                'Interest Expense Non Operating': '非营业利息支出',
+                'Interest Income Non Operating': '非营业利息收入',
+                'Operating Income': '营业收入',
+                'Operating Expense': '营业费用',
+                'Research And Development': '研究与开发',
+                'Selling General And Administration': '销售、一般与行政费用',
+                'Gross Profit': '毛利润',
+                'Cost Of Revenue': '收入成本',
+                'Total Revenue': '总收入',
+                'Operating Revenue': '营业收入'
+            }
+                trans_list = [trans_map.get(i, i) for i in list]
+                trans= original[:6]+trans_list
+                for i, index in enumerate(indices):
+                    result[index + 1] = result[index + 1].replace(original[i], trans[i])
+                result_data = "".join(result)
+            elif statement_choice==3:
+                result = re.split(r'(<th>)', result_data)
+                indices = [index for index, value in enumerate(result) if value == '<th>']
+                original = [result[indices[i] + 1].split('</th>')[0] for i in range(len(indices))]
+                list = [result[indices[i] + 1].split('</th>')[0] for i in range(6,len(indices))]
+                trans_map = {
+                    'Free Cash Flow': '自由现金流',
+                    'Repurchase Of Capital Stock': '资本股票回购',
+                    'Repayment Of Debt': '债务偿还',
+                    'Issuance Of Debt': '债务发行',
+                    'Issuance Of Capital Stock': '资本股票发行',
+                    'Capital Expenditure': '资本支出',
+                    'Interest Paid Supplemental Data': '支付的利息补充数据',
+                    'Income Tax Paid Supplemental Data': '支付的所得税补充数据',
+                    'End Cash Position': '期末现金余额',
+                    'Beginning Cash Position': '期初现金余额',
+                    'Changes In Cash': '现金变动',
+                    'Financing Cash Flow': '融资现金流',
+                    'Cash Flow From Continuing Financing Activities': '持续融资活动的现金流',
+                    'Net Other Financing Charges': '净其他融资费用',
+                    'Cash Dividends Paid': '支付的现金股息',
+                    'Common Stock Dividend Paid': '支付的普通股股息',
+                    'Net Common Stock Issuance': '净普通股发行',
+                    'Common Stock Payments': '普通股支付',
+                    'Common Stock Issuance': '普通股发行',
+                    'Net Issuance Payments Of Debt': '净债务发行支付',
+                    'Net Short Term Debt Issuance': '净短期债务发行',
+                    'Net Long Term Debt Issuance': '净长期债务发行',
+                    'Long Term Debt Payments': '长期债务支付',
+                    'Long Term Debt Issuance': '长期债务发行',
+                    'Investing Cash Flow': '投资现金流',
+                    'Cash Flow From Continuing Investing Activities': '持续投资活动的现金流',
+                    'Net Other Investing Changes': '净其他投资变动',
+                    'Net Investment Purchase And Sale': '净投资买卖',
+                    'Sale Of Investment': '投资出售',
+                    'Purchase Of Investment': '投资购买',
+                    'Net Business Purchase And Sale': '净企业买卖',
+                    'Purchase Of Business': '企业购买',
+                    'Net PPE Purchase And Sale': '净固定资产买卖',
+                    'Purchase Of PPE': '固定资产购买',
+                    'Operating Cash Flow': '经营现金流',
+                    'Cash Flow From Continuing Operating Activities': '持续经营活动的现金流',
+                    'Change In Working Capital': '营运资金变动',
+                    'Change In Other Working Capital': '其他营运资金变动',
+                    'Change In Other Current Liabilities': '其他流动负债变动',
+                    'Change In Other Current Assets': '其他流动资产变动',
+                    'Change In Payables And Accrued Expense': '应付账款及应计费用变动',
+                    'Change In Payable': '应付账款变动',
+                    'Change In Account Payable': '应付账款变动',
+                    'Change In Inventory': '存货变动',
+                    'Change In Receivables': '应收账款变动',
+                    'Changes In Account Receivables': '应收账款变动',
+                    'Other Non Cash Items': '其他非现金项目',
+                    'Stock Based Compensation': '基于股票的薪酬',
+                    'Deferred Tax': '递延税款',
+                    'Deferred Income Tax': '递延所得税',
+                    'Depreciation Amortization Depletion': '折旧、摊销、耗竭',
+                    'Depreciation And Amortization': '折旧与摊销',
+                    'Net Income From Continuing Operations': '来自持续经营的净收入'
+                }
+                trans_list = [trans_map.get(i, i) for i in list]
+                trans= original[:6]+trans_list
+                for i, index in enumerate(indices):
+                    result[index + 1] = result[index + 1].replace(original[i], trans[i])
+                result_data = "".join(result)               
             result_type = 'html_table'  # HTML 表格
 
         elif function_num == 4:
@@ -244,56 +360,56 @@ def company():
     
 
 # 英文
-# @app.route('/zh/company', methods=['POST'])
-# def company():
-#     try:
+@app.route('/en/company', methods=['POST'])
+def company_en():
+    try:
 
-#         company_name = request.form['company_name']
-#         function_num = int(request.form['function_num'])
-        
-#         # 根据不同的功能号调用相应函数并返回结果
-#         if function_num == 1:
-#             result_data = company_profile(company_name)
-#             result_type = 'simple'  # 简单字典
-            
-#         elif function_num == 2:
-#             result_data = get_financial_numbers(company_name)
-#             result_type = 'nested'  # 嵌套字典
-            
-#         elif function_num == 3:
-#             statement_choice = int(request.form['statement_choice'])
-#             result_data = get_financial_statements(company_name, statement_choice)
-#             result_type = 'html_table'  # HTML 表格
-
-#         elif function_num == 4:
-#             buffer = plot_income_data_web(company_name)
-#             img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
-
-#             # Pass the base64 string to the template
-#             return render_template('plot.html', image_data=img_base64,company_name=company_name)
-
-#         else:
-#             return "无效的功能编号"
-        
-#         return render_template('ch_result.html', company=company_name, result_data=result_data, result_type=result_type)
-
-#     except Exception as e:
-#         return render_template('error.html', error_message=str(e)
-
-
-@app.route('/zh/financial_statements', methods=['GET', 'POST'])
-def financial_statements():
-    if request.method == 'POST':
         company_name = request.form['company_name']
-        choice = int(request.form['statement_choice'])
+        function_num = int(request.form['function_num'])
+        
+        # 根据不同的功能号调用相应函数并返回结果
+        if function_num == 1:
+            result_data = company_profile(company_name)
+            result_type = 'simple'  # 简单字典
+            
+        elif function_num == 2:
+            result_data = get_financial_numbers(company_name)
+            result_type = 'nested'  # 嵌套字典
+            
+        elif function_num == 3:
+            statement_choice = int(request.form['statement_choice'])
+            result_data = get_financial_statements(company_name, statement_choice)
+            result_type = 'html_table'  # HTML 表格
 
-        # 调用 get_financial_statements 函数获取相应的财务报表
-        result_data = get_financial_statements(company_name, choice)
+        elif function_num == 4:
+            buffer = plot_income_data_web(company_name)
+            img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-        # 将 HTML 表格数据传递给模板
-        return render_template('result.html', company=company_name, result_data=result_data)
+            # Pass the base64 string to the template
+            return render_template('plot.html', image_data=img_base64,company_name=company_name)
 
-    return render_template('financial_statements.html')
+        else:
+            return "无效的功能编号"
+        
+        return render_template('en_result.html', company=company_name, result_data=result_data, result_type=result_type)
+
+    except Exception as e:
+        return render_template('error.html', error_message=str(e))
+
+
+# @app.route('/zh/financial_statements', methods=['GET', 'POST'])
+# def financial_statements():
+#     if request.method == 'POST':
+#         company_name = request.form['company_name']
+#         choice = int(request.form['statement_choice'])
+
+#         # 调用 get_financial_statements 函数获取相应的财务报表
+#         result_data = get_financial_statements(company_name, choice)
+
+#         # 将 HTML 表格数据传递给模板
+#         return render_template('result.html', company=company_name, result_data=result_data)
+
+#     return render_template('financial_statements.html')
 
 
 
