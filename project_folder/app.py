@@ -6,9 +6,13 @@ import matplotlib.pyplot as plt
 import base64
 from functions import *
 from openai import OpenAI
+matplotlib.use('Agg')  # 使用非交互式后端
+import matplotlib.pyplot as plt
+import base64
 import re
 import pandas as pd
 import yfinance as yf
+
 
 
 
@@ -345,7 +349,10 @@ def company():
             result_type = 'html_table'  # HTML 表格
 
         elif function_num == 4:
-            buffer = plot_income_data_web(company_name)
+
+            visualization_choice = int(request.form['visualization_choice'])
+            buffer = plot_data_web(company_name,visualization_choice)
+            #buffer = plot_income_data_web(company_name)
             img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
             # Pass the base64 string to the template

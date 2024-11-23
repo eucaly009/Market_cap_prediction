@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import joblib
+import  io
 import yfinance as yf
 import matplotlib.pyplot as plt
 import os
@@ -234,6 +235,150 @@ def get_financial_statements(company_name, choice):
         return statement.to_html(classes='table table-bordered')
     else:
         return "<p>该公司没有可用的财务报表数据。</p>"
+
+import yfinance as yf
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def plot_data_web(company_name, choice):
+    # 下载公司财务数据
+    company = yf.Ticker(company_name)
+    income_statement = company.financials
+
+    if choice == 1:
+        # 获取 Operating Income 和 Net Income
+        try:
+            operating_income = income_statement.loc['Operating Income']
+            net_income = income_statement.loc['Net Income']
+        except KeyError:
+            print("Operating Income or Net Income not found in the financials.")
+            return None
+
+        # 转换为 DataFrame
+        pd_operating_income = pd.DataFrame({"Operating Income": operating_income[::-1]})
+        pd_net_income = pd.DataFrame({"Net Income": net_income[::-1]})
+
+        # 计算同比增长率
+        operating_income_yoy = pd_operating_income.pct_change() * 100
+        net_income_yoy = pd_net_income.pct_change() * 100
+
+        # 合并数据
+        operating_combined = pd.concat([pd_operating_income, operating_income_yoy.add_suffix('_YoY')], axis=1)
+        net_combined = pd.concat([pd_net_income, net_income_yoy.add_suffix('_YoY')], axis=1)
+
+        # 转换索引为日期格式
+        operating_combined.index = pd.to_datetime(operating_combined.index)
+        net_combined.index = pd.to_datetime(net_combined.index)
+
+        # 图表 1: Operating Income 和同比增长率
+        fig1, ax1 = plt.subplots(figsize=(10, 6))
+        ax1.bar(operating_combined.index, operating_combined['Operating Income'], color='b', width=50)
+        ax1.set_xlabel('Year')
+        ax1.set_ylabel('Operating Income (USD)', color='b')
+        ax1.tick_params(axis='y', labelcolor='b')
+        ax1.set_title('Operating Income and YoY Growth')
+
+        ax2 = ax1.twinx()
+        ax2.plot(operating_combined.index, operating_combined['Operating Income_YoY'], color='g', marker='o', label='Operating Income YoY')
+        ax2.set_ylabel('YoY Growth (%)', color='g')
+        ax2.tick_params(axis='y', labelcolor='g')
+        ax2.legend(loc='upper left')
+
+        # 图表 2: Net Income 和同比增长率
+        fig2, ax3 = plt.subplots(figsize=(10, 6))
+        ax3.bar(net_combined.index, net_combined['Net Income'], color='r', width=50)
+        ax3.set_xlabel('Year')
+        ax3.set_ylabel('Net Income (USD)', color='r')
+        ax3.tick_params(axis='y', labelcolor='r')
+        ax3.set_title('Net Income and YoY Growth')
+
+        ax4 = ax3.twinx()
+        ax4.plot(net_combined.index, net_combined['Net Income_YoY'], color='purple', marker='o', label='Net Income YoY')
+        ax4.set_ylabel('YoY Growth (%)', color='purple')
+        ax4.tick_params(axis='y', labelcolor='purple')
+        ax4.legend(loc='upper left')
+        plt.tight_layout()
+
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        plt.close()  # 关闭图形
+        buffer.seek(0)  # 将指针移动到图像数据的开头
+        return buffer
+
+    elif choice == 2:
+        # 获取毛利率、净利率和费用率数据
+        try:
+            gross_profit = income_statement.loc['Gross Profit']
+            net_income = income_statement.loc['Net Income']
+            revenue = income_statement.loc['Total Revenue']
+            selling_expense = income_statement.loc['Selling General And Administration']
+            interest_expense = income_statement.loc['Interest Expense']
+            total_expense = income_statement.loc['Total Expenses']
+        except KeyError:
+            print("Required financial data not found in the financials.")
+            return None
+
+        # 计算毛利率和净利率
+        gross_profit_margin = (gross_profit / revenue) * 100
+        net_profit_margin = (net_income / revenue) * 100
+
+        # 计算费用率
+        selling_expense_ratio = (selling_expense / revenue) * 100
+        interest_expense_ratio = (interest_expense / revenue) * 100
+        total_expense_ratio = (total_expense / revenue) * 100
+
+        # 转换为 DataFrame
+        profit_ratios = pd.DataFrame({
+            'Gross Profit Margin': gross_profit_margin[::-1],
+            'Net Profit Margin': net_profit_margin[::-1]
+        })
+        expense_ratios = pd.DataFrame({
+            'Selling Expense Ratio': selling_expense_ratio[::-1],
+            'Interest Expense Ratio': interest_expense_ratio[::-1],
+            'Total Expense Ratio': total_expense_ratio[::-1]
+        })
+
+        # 图表 1: 毛利率和净利率
+        fig1, ax1 = plt.subplots(figsize=(10, 6))
+        ax1.bar(profit_ratios.index, profit_ratios['Gross Profit Margin'], color='b', width=50)
+        ax1.set_xlabel('Year')
+        ax1.set_ylabel('Gross Profit Margin (%)', color='b')
+        ax1.tick_params(axis='y', labelcolor='b')
+        ax1.set_title('Gross Profit Margin and Net Profit Margin')
+
+        ax2 = ax1.twinx()
+        ax2.plot(profit_ratios.index, profit_ratios['Net Profit Margin'], color='g', marker='o', label='Net Profit Margin')
+        ax2.set_ylabel('Net Profit Margin (%)', color='g')
+        ax2.tick_params(axis='y', labelcolor='g')
+        ax2.legend(loc='upper left')
+
+        # 图表 2: 费用率
+        fig2, ax3 = plt.subplots(figsize=(10, 6))
+        ax3.bar(expense_ratios.index, expense_ratios['Selling Expense Ratio'], color='r', width=50, label='Selling Expense Ratio')
+        ax3.bar(expense_ratios.index, expense_ratios['Interest Expense Ratio'], color='y', width=30, label='Interest Expense Ratio')
+        ax3.bar(expense_ratios.index, expense_ratios['Total Expense Ratio'], color='purple', width=10, label='Total Expense Ratio')
+        ax3.set_xlabel('Year')
+        ax3.set_ylabel('Expense Ratios (%)')
+        ax3.set_title('Expense Ratios')
+        ax3.legend()
+        plt.tight_layout()
+
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        plt.close()  # 关闭图形
+        buffer.seek(0)  # 将指针移动到图像数据的开头
+        return buffer
+
+    else:
+        print("Invalid choice. Please choose 1 or 2.")
+        return None
+
+    # 展示图表
+    plt.tight_layout()
+    plt.show()
+
+
 
 
 def plot_income_data_web(company_name):
