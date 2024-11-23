@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for
 from functions import *
 from openai import OpenAI
+import io
+import matplotlib
+matplotlib.use('Agg')  # 使用非交互式后端
+import matplotlib.pyplot as plt
+import base64
 
 
 
