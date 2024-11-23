@@ -349,6 +349,12 @@ def company():
             # Pass the base64 string to the template
             return render_template('plot.html', image_data=img_base64,company_name=company_name)
         
+        elif function_num == 6:
+            ranking_info = ranking(company_name)
+            ranking_info.columns = ["市值","类别","类别排名","行业","行业排名"]
+            result_data = ranking_info.to_html(classes="table table-striped", index=True)
+            result_type = "ranking"
+            
 
         else:
             return "无效的功能编号"
@@ -387,6 +393,11 @@ def company_en():
 
             # Pass the base64 string to the template
             return render_template('plot.html', image_data=img_base64,company_name=company_name)
+        
+        elif function_num == 6:
+            ranking_info = ranking(company_name)
+            result_data = ranking_info.to_html(classes="table table-striped", index=True)
+            result_type = "ranking" 
 
         else:
             return "无效的功能编号"

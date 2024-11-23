@@ -776,3 +776,60 @@ def menu_function5(company):
         except:
             print("please key in correct command in [1,2,3]")
 
+
+
+
+def ranking(company):
+    df = pd.read_csv("../data/new_financial.csv")
+    # Check if the company exists in the DataFrame
+    if company not in df['Company'].values:
+        return f"Company {company} not found."
+    
+    ticker_data = df[df['Company'] == company].iloc[0]
+    
+    # Get the sector and industry for the ticker
+    sector = ticker_data['sector']
+    industry = ticker_data['industry']
+    
+    # Filter the DataFrame by the same sector and industry
+    sector_data = df[df['sector'] == sector]
+    industry_data = df[df['industry'] == industry]
+    
+    # Convert relevant columns to numeric (coerce errors)
+    columns_to_check = [
+        'marketCap', 'beta', 'trailingPE', 'forwardPE', 'profitMargins',
+        'grossMargins', 'operatingMargins', 'debtToEquity', 'currentRatio',
+        'quickRatio', 'freeCashflow', 'totalRevenue', 'netIncomeToCommon',
+        'trailingEps', 'forwardEps', 'dividendYield', 'returnOnAssets',
+        'returnOnEquity', 'enterpriseValue'
+    ]
+    
+    # Convert columns to numeric and coerce errors to NaN
+    for column in columns_to_check:
+
+        sector_data.loc[:, column] = pd.to_numeric(sector_data[column], errors='coerce')
+        industry_data.loc[:, column] = pd.to_numeric(industry_data[column], errors='coerce')
+
+    # Ranking for each column of interest
+    ranking_data = {}
+    for column in columns_to_check:
+        # Ranking in sector
+        sector_rank = (sector_data[column] >= ticker_data[column]).sum()
+        sector_total = sector_data[column].count()
+        sector_info = f"({sector_rank}/{sector_total})" if sector_rank != 0 else '(NA)'
+        
+        # Ranking in industry
+        industry_rank = (industry_data[column] >= ticker_data[column]).sum()
+        industry_total = industry_data[column].count()
+        industry_info = f"({industry_rank}/{industry_total})"if industry_rank != 0 else '(NA)'
+        
+        # Store the results in the dictionary
+        ranking_data[column] = (ticker_data[column], sector_info, industry_info)
+    
+    # Create a ranking DataFrame
+    ranking_df = pd.DataFrame.from_dict(ranking_data, orient='index', columns=['Value', 'Rank in Sector', 'Rank in Industry'])
+    ranking_df['Sector'] = sector
+    ranking_df['Industry'] = industry
+
+    return ranking_df[['Value', 'Sector', 'Rank in Sector', 'Industry', 'Rank in Industry']]
+
