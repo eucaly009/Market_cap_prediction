@@ -95,7 +95,7 @@ def company():
 
         elif function_num == 4:
             visualization_choice = int(request.form['visualization_choice'])
-            buffer = plot_income_data_web(company_name,visualization_choice)
+            buffer = plot_data_web(company_name,visualization_choice)
             img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
             # Pass the base64 string to the template
