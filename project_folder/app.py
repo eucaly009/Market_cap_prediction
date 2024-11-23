@@ -93,6 +93,14 @@ def company():
             result_data = get_financial_statements(company_name, statement_choice)
             result_type = 'html_table'  # HTML 表格
 
+        elif function_num == 4:
+            visualization_choice = int(request.form['visualization_choice'])
+            buffer = plot_income_data_web(company_name,visualization_choice)
+            img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+            # Pass the base64 string to the template
+            return render_template('plot.html', image_data=img_base64,company_name=company_name)
+
         else:
             return "无效的功能编号"
         
