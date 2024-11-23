@@ -7,6 +7,8 @@ import base64
 from functions import *
 from openai import OpenAI
 import re
+import pandas as pd
+import yfinance as yf
 
 
 
