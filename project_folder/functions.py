@@ -1079,3 +1079,40 @@ def dcf_model(ticker):
     else:
         return None
         print("当前股价未知，无法计算每股价值。")
+
+
+
+
+def chat_with_gpt():
+    '''
+    description: 
+        this function call openai api to make users able to interact with chatgpt within this website
+
+    parameters:
+        None
+    
+    output:
+        print the response from chat-gpt
+
+    '''
+    client = OpenAI(
+    api_key="API-KEY",
+    )
+    conversation = [{"role": "system", "content": "You are a helpful assistant."}]
+    while True:
+        try:
+            user_input = input("you:")
+            conversation.append({"role": "user", "content": user_input})
+            chat_completion = client.chat.completions.create(
+                messages=conversation,
+                model="gpt-4o-mini",
+                        )
+            print("You:", user_input)
+            assistant_reply = chat_completion.choices[0].message.content
+            conversation.append({"role": "assistant", "content": assistant_reply})
+            print("ChatGPT: ", assistant_reply)
+            print("\n")
+            print("\n")
+
+        except TimeoutError:
+            print("error")
