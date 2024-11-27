@@ -351,7 +351,7 @@ def company():
         elif function_num == 4:
 
             visualization_choice = int(request.form['visualization_choice'])
-            buffer = plot_data_web(company_name,visualization_choice)
+            buffer = plot_data_web_sns(company_name,visualization_choice)
             #buffer = plot_income_data_web(company_name)
             img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
@@ -419,11 +419,13 @@ def company_en():
             result_type = 'html_table'  # HTML 表格
 
         elif function_num == 4:
-            buffer = plot_income_data_web(company_name)
+            visualization_choice = int(request.form['visualization_choice'])
+            buffer = plot_data_web_sns(company_name, visualization_choice)
+            # buffer = plot_income_data_web(company_name)
             img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
             # Pass the base64 string to the template
-            return render_template('plot.html', image_data=img_base64,company_name=company_name)
+            return render_template('ploten.html', image_data=img_base64, company_name=company_name)
         
         elif function_num == 6:
             ranking_info = ranking(company_name)

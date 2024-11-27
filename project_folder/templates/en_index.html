@@ -23,6 +23,7 @@
                             <option value="1">Introduction</option>
                             <option value="2">Important Financial Data</option>
                             <option value="3">Financial Reports</option>
+                            <option value="4">Financial Data Visualization</option>
                             <option value="6">Industry Ranking</option>
                             <option value="7">Company Evaluation</option> <!-- Added "Company Evaluation" option -->
                         </select>
@@ -47,6 +48,15 @@
                         </select>
                     </div>
 
+
+                    <div id="visualization_choice" class="mb-3" style="display: none;">
+                        <label for="visualization_choice" class="form-label">Select Finance Data To Visualize:</label>
+                        <select name="visualization_choice" class="form-select">
+                            <option value="1">Income Data Visualization</option>
+                            <option value="2">Expense Ratios Visualization</option>
+                        </select>
+                    </div>
+
                     <div id="generated_text" class="alert alert-info mt-3" style="display: none;">
                         <!-- Display AI-generated text -->
                         <p>{{ text }}</p>
@@ -63,21 +73,31 @@
             var functionNum = document.getElementById("function_num").value;
             var statementChoiceDiv = document.getElementById("statement_choice");
             var evaluationChoiceDiv = document.getElementById("evaluation_choice");
+            var visualizationChoiceDiv=document.getElementById("visualization_choice");
 
             // Show or hide the Financial Reports section
             if (functionNum == "3") {
                 statementChoiceDiv.style.display = "block";
+                visualizationChoiceDiv.style.display="none"
                 evaluationChoiceDiv.style.display = "none";
-            } 
+            }
+            // Show or hide the Visualization Section
+            if (functionNum == "4") {
+                statementChoiceDiv.style.display = "none";
+                visualizationChoiceDiv.style.display = "block";
+                evaluationChoiceDiv.style.display = "none"
+            }
             // Show or hide the Company Evaluation section
             else if (functionNum == "7") {
                 statementChoiceDiv.style.display = "none";
+                visualizationChoiceDiv.style.display="none"
                 evaluationChoiceDiv.style.display = "block";
             } 
             // Hide all other sections
             else {
                 statementChoiceDiv.style.display = "none";
                 evaluationChoiceDiv.style.display = "none";
+                visualizationChoiceDiv.style.display="none"
             }
         }
     </script>
