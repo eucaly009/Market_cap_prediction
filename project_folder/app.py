@@ -154,7 +154,7 @@ def company():
                 result = re.split(r'(<th>)', result_data)
                 indices = [index for index, value in enumerate(result) if value == '<th>']
                 original = [result[indices[i] + 1].split('</th>')[0] for i in range(len(indices))]
-                list = [result[indices[i] + 1].split('</th>')[0] for i in range(6,len(indices))]
+                list1 = [result[indices[i] + 1].split('</th>')[0] for i in range(6,len(indices))]
                 trans_map = {
                                 "Treasury Shares Number": "库存股数",
                                 "Ordinary Shares Number": "普通股数",
@@ -225,7 +225,7 @@ def company():
                                 "Cash Equivalents": "现金等价物",
                                 "Cash Financial": "现金财务"
                             }
-                trans_list = [trans_map.get(i, i) for i in list]
+                trans_list = [trans_map.get(i, i) for i in list1]
                 trans= original[:6]+trans_list
                 for i, index in enumerate(indices):
                     result[index + 1] = result[index + 1].replace(original[i], trans[i])
@@ -234,7 +234,7 @@ def company():
                 result = re.split(r'(<th>)', result_data)
                 indices = [index for index, value in enumerate(result) if value == '<th>']
                 original = [result[indices[i] + 1].split('</th>')[0] for i in range(len(indices))]
-                list = [result[indices[i] + 1].split('</th>')[0] for i in range(6,len(indices))]
+                list1 = [result[indices[i] + 1].split('</th>')[0] for i in range(6,len(indices))]
                 trans_map = {
                 'Tax Effect Of Unusual Items': '异常项目的税务影响',
                 'Tax Rate For Calcs': '计算用税率',
@@ -276,7 +276,7 @@ def company():
                 'Total Revenue': '总收入',
                 'Operating Revenue': '营业收入'
             }
-                trans_list = [trans_map.get(i, i) for i in list]
+                trans_list = [trans_map.get(i, i) for i in list1]
                 trans= original[:6]+trans_list
                 for i, index in enumerate(indices):
                     result[index + 1] = result[index + 1].replace(original[i], trans[i])
@@ -285,7 +285,7 @@ def company():
                 result = re.split(r'(<th>)', result_data)
                 indices = [index for index, value in enumerate(result) if value == '<th>']
                 original = [result[indices[i] + 1].split('</th>')[0] for i in range(len(indices))]
-                list = [result[indices[i] + 1].split('</th>')[0] for i in range(6,len(indices))]
+                list1 = [result[indices[i] + 1].split('</th>')[0] for i in range(6,len(indices))]
                 trans_map = {
                     'Free Cash Flow': '自由现金流',
                     'Repurchase Of Capital Stock': '资本股票回购',
@@ -341,7 +341,7 @@ def company():
                     'Depreciation And Amortization': '折旧与摊销',
                     'Net Income From Continuing Operations': '来自持续经营的净收入'
                 }
-                trans_list = [trans_map.get(i, i) for i in list]
+                trans_list = [trans_map.get(i, i) for i in list1]
                 trans= original[:6]+trans_list
                 for i, index in enumerate(indices):
                     result[index + 1] = result[index + 1].replace(original[i], trans[i])
