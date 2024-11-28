@@ -236,9 +236,14 @@ def get_financial_statements(company_name, choice):
     else:
         return "<p>该公司没有可用的财务报表数据。</p>"
 
-import yfinance as yf
-import pandas as pd
-import matplotlib.pyplot as plt
+
+
+
+
+
+
+
+
 
 
 def plot_data_web(company_name, choice):
@@ -377,6 +382,149 @@ def plot_data_web(company_name, choice):
     # 展示图表
     plt.tight_layout()
     plt.show()
+
+
+
+def plot_data_web_sns(company_name, choice):
+    # 设置全局样式
+    sns.set_theme(style="whitegrid")
+    company = yf.Ticker(company_name)
+    income_statement = company.financials
+
+    if choice == 1:
+        try:
+            # 提取 Operating Income 和 Net Income
+            operating_income = income_statement.loc['Operating Income']
+            net_income = income_statement.loc['Net Income']
+        except KeyError:
+            print("Operating Income or Net Income not found in the financials.")
+            return None
+
+        # 转换为 DataFrame
+        pd_operating_income = pd.DataFrame({"Operating Income": operating_income[::-1]})
+        pd_net_income = pd.DataFrame({"Net Income": net_income[::-1]})
+
+        # 计算同比增长率
+        operating_income_yoy = pd_operating_income.pct_change() * 100
+        net_income_yoy = pd_net_income.pct_change() * 100
+
+        # 合并数据
+        operating_combined = pd.concat([pd_operating_income, operating_income_yoy.add_suffix('_YoY')], axis=1)
+        net_combined = pd.concat([pd_net_income, net_income_yoy.add_suffix('_YoY')], axis=1)
+
+        # 创建合并图表
+        fig, axs = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+
+        # 子图 1: Operating Income 和同比增长率
+        sns.barplot(x=operating_combined.index.strftime('%Y'),
+                    y="Operating Income",
+                    data=operating_combined.reset_index(),
+                    ax=axs[0], color="skyblue", label="Operating Income")
+        sns.lineplot(x=operating_combined.index.strftime('%Y'),
+                     y="Operating Income_YoY",
+                     data=operating_combined.reset_index(),
+                     ax=axs[0].twinx(), color="green", marker="o", label="YoY Growth")
+        axs[0].set_title("Operating Income and YoY Growth", fontsize=16)
+        axs[0].set_ylabel("Operating Income (USD)", fontsize=12)
+        axs[0].legend(loc="upper left")
+
+        # 子图 2: Net Income 和同比增长率
+        sns.barplot(x=net_combined.index.strftime('%Y'),
+                    y="Net Income",
+                    data=net_combined.reset_index(),
+                    ax=axs[1], color="lightcoral", label="Net Income")
+        sns.lineplot(x=net_combined.index.strftime('%Y'),
+                     y="Net Income_YoY",
+                     data=net_combined.reset_index(),
+                     ax=axs[1].twinx(), color="purple", marker="o", label="YoY Growth")
+        axs[1].set_title("Net Income and YoY Growth", fontsize=16)
+        axs[1].set_xlabel("Year", fontsize=12)
+        axs[1].set_ylabel("Net Income (USD)", fontsize=12)
+        axs[1].legend(loc="upper left")
+
+        plt.tight_layout()
+
+        # 将图保存到 buffer 中
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format="png", dpi=100)
+        plt.close(fig)  # 关闭图形，释放内存
+        buffer.seek(0)
+        return buffer
+
+    elif choice == 2:
+        try:
+            # 提取数据
+            gross_profit = income_statement.loc['Gross Profit']
+            net_income = income_statement.loc['Net Income']
+            revenue = income_statement.loc['Total Revenue']
+            selling_expense = income_statement.loc['Selling General And Administration']
+            interest_expense = income_statement.loc['Interest Expense']
+            total_expense = income_statement.loc['Total Expenses']
+        except KeyError:
+            print("Required financial data not found in the financials.")
+            return None
+
+        # 计算毛利率和净利率
+        gross_profit_margin = (gross_profit / revenue) * 100
+        net_profit_margin = (net_income / revenue) * 100
+
+        # 计算费用率
+        selling_expense_ratio = (selling_expense / revenue) * 100
+        interest_expense_ratio = (interest_expense / revenue) * 100
+        total_expense_ratio = (total_expense / revenue) * 100
+
+        # 转换为 DataFrame
+        ratios = pd.DataFrame({
+            'Gross Profit Margin': gross_profit_margin[::-1],
+            'Net Profit Margin': net_profit_margin[::-1],
+            'Selling Expense Ratio': selling_expense_ratio[::-1],
+            'Interest Expense Ratio': interest_expense_ratio[::-1],
+            'Total Expense Ratio': total_expense_ratio[::-1],
+        })
+
+        # 创建合并图表
+        fig, axs = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+
+        # 子图 1: 毛利率和净利率
+        sns.barplot(x=ratios.index.strftime('%Y'),
+                    y="Gross Profit Margin",
+                    data=ratios.reset_index(),
+                    ax=axs[0], color="blue", label="Gross Profit Margin")
+        sns.lineplot(x=ratios.index.strftime('%Y'),
+                     y="Net Profit Margin",
+                     data=ratios.reset_index(),
+                     ax=axs[0].twinx(), color="green", marker="o", label="Net Profit Margin")
+        axs[0].set_title("Profit Margins Over Years", fontsize=16)
+        axs[0].set_ylabel("Profit Margins (%)", fontsize=12)
+        axs[0].legend(loc="upper left")
+
+        # 子图 2: 各费用率
+        sns.barplot(x=ratios.index.strftime('%Y'),
+                    y="Selling Expense Ratio",
+                    data=ratios.reset_index(),
+                    ax=axs[1], color="lightcoral", label="Selling Expense Ratio")
+        sns.lineplot(x=ratios.index.strftime('%Y'),
+                     y="Total Expense Ratio",
+                     data=ratios.reset_index(),
+                     ax=axs[1].twinx(), color="purple", marker="o", label="Total Expense Ratio")
+        axs[1].set_title("Expense Ratios Over Years", fontsize=16)
+        axs[1].set_xlabel("Year", fontsize=12)
+        axs[1].set_ylabel("Expense Ratios (%)", fontsize=12)
+        axs[1].legend(loc="upper left")
+
+        plt.tight_layout()
+
+        # 将图保存到 buffer 中
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format="png", dpi=100)
+        plt.close(fig)  # 关闭图形，释放内存
+        buffer.seek(0)
+        return buffer
+
+    else:
+        print("Invalid choice. Please choose 1 or 2.")
+        return None
+
 
 
 
