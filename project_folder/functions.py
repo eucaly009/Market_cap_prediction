@@ -1169,7 +1169,7 @@ def calculate_fcf_valuation(ticker):
 # calculate_fcf_valuation(ticker)
 
 
-def dcf_model(ticker):
+#def dcf_model(ticker):
     # 获取财务数据
     stock = yf.Ticker(ticker)
     
@@ -1227,6 +1227,26 @@ def dcf_model(ticker):
     else:
         return None
         print("当前股价未知，无法计算每股价值。")
+def dcf_model(company_name, growth_rate, discount_rate, terminal_growth_rate):
+    import yfinance as yf
+    print(f"Running DCF Model with {ticker}, {growth_rate}, {discount_rate}, {terminal_growth_rate}")
+    # 模型逻辑...
+
+    # 获取财务数据
+    stock = yf.Ticker(company_name)
+    cash_flow = stock.cashflow
+    fcf = cash_flow.loc['Free Cash Flow'][0] if 'Free Cash Flow' in cash_flow.index else 1_000_000
+
+    # 计算未来现金流
+    cash_flows = [(fcf * ((1 + growth_rate) ** i)) for i in range(1, 6)]
+    discounted_cash_flows = [cf / ((1 + discount_rate) ** i) for i, cf in enumerate(cash_flows, start=1)]
+    
+    # 计算终值和总估值
+    terminal_value = cash_flows[-1] * (1 + terminal_growth_rate) / (discount_rate - terminal_growth_rate)
+    discounted_terminal_value = terminal_value / ((1 + discount_rate) ** 5)
+    total_valuation = sum(discounted_cash_flows) + discounted_terminal_value
+
+    return round(total_valuation, 2)
 
 
 

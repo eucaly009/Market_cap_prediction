@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import io
 import matplotlib
 matplotlib.use('Agg')  # 使用非交互式后端
@@ -19,10 +19,18 @@ import yfinance as yf
 
 
 app = Flask(__name__)
+app.secret_key = 'hwjsecretkey' 
 
 @app.route('/')
-def choose_language():
-    return render_template('language_yjl.html')
+# '''def choose_language():
+#     return render_template('language_yjl.html') 
+
+@app.route('/set_ticker', methods=['GET', 'POST'])
+def set_ticker():
+    if request.method == 'POST':
+        session['company_name'] = request.form['ticker']  # 将 Ticker 存储到 session
+        return redirect(url_for('en_index'))  # 返回主页面
+    return render_template('en_ticker.html')
 
 @app.route('/zh',methods=["POST","GET"]) #简体中文
 def zh_index():
@@ -46,15 +54,17 @@ def zh_index():
 
 
 
-    generated_text = "暂停使用gpt"
+    #generated_text = "暂停使用gpt"
 
 
-    return render_template('ch_index.html',text=generated_text)
+    #return render_template('ch_index.html',text=generated_text)
 
 
 
 @app.route('/en',methods=["POST","GET"]) #English
 def en_index():
+    company_name = session.get('company_name', 'None Selected')  # 从 session 获取 Ticker
+    return render_template('en_index.html', company_name=company_name)
 # '''
 #     client = OpenAI()
 
@@ -427,6 +437,45 @@ def company_en():
             # Pass the base64 string to the template
             return render_template('ploten.html', image_data=img_base64, company_name=company_name)
         
+        elif function_num == 5:  # 新增估值模型功能
+            evaluation_choice = int(request.form['evaluation_choice'])
+            
+            # 获取额外的表单输入
+            growth_rate = float(request.form.get('growth_rate', 0))
+            discount_rate = float(request.form.get('discount_rate', 0))
+            terminal_growth_rate = float(request.form.get('terminal_growth_rate', 0))
+
+            # 打印日志供调试
+            print(f"Company Name: {company_name}")
+            print(f"Evaluation Choice: {evaluation_choice}")
+            print(f"Growth Rate: {growth_rate}, Discount Rate: {discount_rate}, Terminal Growth Rate: {terminal_growth_rate}")
+
+            # 根据选择调用相应估值模型
+            if evaluation_choice in [1, 3]:  # 如果选择了传统估值或两种模型结合
+                result_traditional = dcf_model(
+                    company_name, growth_rate, discount_rate, terminal_growth_rate
+                )
+            else:
+                result_traditional = None
+
+            if evaluation_choice in [2, 3]:  # 如果选择了机器学习估值或两种模型结合
+                result_ml = ml_valuation(company_name)
+            else:
+                result_ml = None
+
+            # 构造结果
+            valuation_result = {
+                "traditional": result_traditional,
+                "machine_learning": result_ml,
+            }
+            
+            # 渲染估值页面
+            return render_template(
+                'valuation.html',
+                company_name=company_name,
+                valuation_result=valuation_result,
+            )
+        
         elif function_num == 6:
             ranking_info = ranking(company_name)
             result_data = ranking_info.to_html(classes="table table-striped", index=True)
@@ -454,6 +503,7 @@ def company_en():
 #         return render_template('result.html', company=company_name, result_data=result_data)
 
 #     return render_template('financial_statements.html')
+#估值
 
 
 
