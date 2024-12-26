@@ -1229,9 +1229,6 @@ def calculate_fcf_valuation(ticker):
         print("当前股价未知，无法计算每股价值。")
 def dcf_model(company_name, growth_rate, discount_rate, terminal_growth_rate):
     import yfinance as yf
-    print(f"Running DCF Model with {ticker}, {growth_rate}, {discount_rate}, {terminal_growth_rate}")
-    # 模型逻辑...
-
     # 获取财务数据
     stock = yf.Ticker(company_name)
     cash_flow = stock.cashflow
